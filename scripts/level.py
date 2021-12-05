@@ -13,6 +13,7 @@ class Level():
         self.win = win 
 
         # Create Map
+        self.world_shift = 0
         self.setup_level()
 
         # Create an environment
@@ -29,8 +30,8 @@ class Level():
 
         for layer in self.tmxdata:
             for tile in layer.tiles():
-                x = tile[0] * 32
-                y = tile[1] * 32
+                x = tile[0] * 64
+                y = tile[1] * 64
                 if tile[2] != None:
                     tile = Tile((x, y), tile[2])
                     self.tiles.add(tile)
@@ -75,15 +76,38 @@ class Level():
         if player.on_ceiling and player.direction.y > 0.1:
             player.on_ceiling = False
 
+    def scroll_x(self):
+        player = self.players.sprite
+        player_x = player.rect.centerx
+        direction_x = player.direction.x
+        w = self.win.get_width()
+
+        if player_x < w / 3 and direction_x < 0:
+            self.world_shift = player.initial_speed
+            player.speed = 0
+        elif player_x > w - (w / 3) and direction_x > 0:
+            self.world_shift = -player.initial_speed
+            player.speed = 0
+        else:
+            self.world_shift = 0
+            player.speed = player.initial_speed
+
     # Run the Level
     def run(self):
 
-        self.tiles.draw(self.win)
-        self.environment.update()
-
+        # Pysics
+        self.scroll_x()
         self.horizontal_movement_collision()
         self.vertical_movement_collision()
 
-        self.players.update()
+        # Draw Tiles
+        self.tiles.update(self.world_shift)
+        self.tiles.draw(self.win)
+        
+        # Draw Environment Objects
+        self.environment.update(self.world_shift)
+
+        # Draw Player
+        self.players.update(self.environment.sunflowers)
         self.players.draw(self.win)
         

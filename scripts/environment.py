@@ -19,15 +19,16 @@ class Environment():
             self.clouds.add(cloud)
 
         # Create Sunflowers
-        sunflower = Sunflower((300, win.get_height()-220))
+        sunflower = Sunflower((600, win.get_height()-220))
         self.sunflowers.add(sunflower)
 
 
-    def update(self):
+    def update(self, x_shift):
+        
         self.clouds.update()
         self.clouds.draw(self.win)
 
-        self.sunflowers.update()
+        self.sunflowers.update(x_shift)
         self.sunflowers.draw(self.win)
 
 
@@ -37,7 +38,7 @@ class Cloud(pygame.sprite.Sprite):
         super().__init__()
 
         # Render Properties
-        self.image = pygame.image.load(os.path.join("assets/sprites/environment/cloud.png"))
+        self.image = pygame.image.load(os.path.join("assets/sprites/environment/cloud.png")).convert_alpha()
         self.image = pygame.transform.scale(self.image, (147, 69))
         self.rect = self.image.get_rect(topleft = pos)
 
@@ -75,7 +76,10 @@ class Sunflower(pygame.sprite.Sprite):
         self.import_animation()
 
     # 
-    def update(self):        
+    def update(self, x_shift):   
+        
+        self.rect.x += x_shift
+        
         self.animate()
 
 

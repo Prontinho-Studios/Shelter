@@ -1,6 +1,8 @@
 from os import walk
 import pygame
 
+canvas_path = "assets/sprites/ui/"
+
 def import_folder(path):
 	surface_list = []
 

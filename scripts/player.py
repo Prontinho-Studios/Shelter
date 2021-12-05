@@ -15,9 +15,10 @@ class Player(pygame.sprite.Sprite):
         
         # Player Movement
         self.direction = pygame.math.Vector2(0,0)
+        self.initial_speed = 4
         self.speed = 4
         self.gravity = 0.8
-        self.jump_speed = -14
+        self.jump_speed = -16
 
         # Player status
         self.picking_item = False
@@ -69,7 +70,7 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.image.get_rect(midtop = self.rect.midtop)
 
 
-    def get_input(self):
+    def get_input(self, entities):
         keys = pygame.key.get_pressed()
 
         # Get the direction
@@ -89,7 +90,7 @@ class Player(pygame.sprite.Sprite):
         # Pick Item
         if keys[pygame.K_e] and self.on_ground:
             self.picking_item = True
-            self.pick_item()
+            self.pick_item(entities)
 
 
     def get_status(self):
@@ -107,18 +108,26 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.status = 'idle'
 
+
     def apply_gravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
 
+
     def jump(self):
         self.direction.y = self.jump_speed
 
-    def pick_item(self):
-        pass
 
-    def update(self):
-        self.get_input()
+    def pick_item(self, entities):
+
+        for sunflower in entities.sprites():
+            if self.rect.colliderect(sunflower.rect):
+                # Add to Inventory
+                sunflower.kill()
+            pass
+
+    def update(self, entities):
+        self.get_input(entities)
         self.get_status()
         self.animate()
 

@@ -1,5 +1,8 @@
 import pygame, sys
 from level import Level
+from UI.canvas import Canvas
+
+pygame.init()
 
 class Game:
 
@@ -9,11 +12,12 @@ class Game:
         # Initial Settings
         self.width = w
         self.height = h
-        self.win = pygame.display.set_mode((w, h), pygame.RESIZABLE)
+        self.win = pygame.display.set_mode((w, h)) #, pygame.FULLSCREEN
         self.clock = pygame.time.Clock()
 
         # Game Objects
         self.level = Level(self.win)
+        self.canvas = Canvas(self.win)
 
 
     # Game Loop
@@ -28,11 +32,15 @@ class Game:
 
             # Update
             self.level.run()
+            self.canvas.run()
 
     # Events
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.K_ESCAPE:
                 pygame.quit()
                 sys.exit()
 
