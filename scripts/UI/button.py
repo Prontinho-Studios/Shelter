@@ -1,5 +1,6 @@
 import pygame, os
-from utilis import import_folder_with_scale, canvas_path
+from utilis import import_folder_with_scale
+from support import canvas_path
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, path_icon, path_hover, path_animation, pos, size, on_click_event):

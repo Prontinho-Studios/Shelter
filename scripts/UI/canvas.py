@@ -49,7 +49,6 @@ class Canvas():
 
 
     def close_inventory(self):
-        print("entrou")
         self.inventory_open = False
 
 

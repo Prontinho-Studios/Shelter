@@ -1,5 +1,5 @@
 import pygame
-from utilis import canvas_path
+from support import canvas_path
 
 class StatsBar(pygame.sprite.Sprite):
     def __init__(self, path, pos, size):
