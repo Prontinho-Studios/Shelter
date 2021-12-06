@@ -19,10 +19,9 @@ class Canvas():
 
         # Create Inventory
         self.inventory_open = False
-        self.inventory = pygame.sprite.Group()
         pos = pygame.math.Vector2(win.get_width()/2-64*5, win.get_height()/2-32*5-30)
         inventory = Inventory("inventory/inventory_background.png", pos, (128*5, 75*5), self.close_inventory)
-        self.inventory.add(inventory)
+        self.inventory = inventory
 
 
     def setup_buttons(self):
@@ -57,7 +56,7 @@ class Canvas():
         self.buttons.draw(self.win)
 
         if self.inventory_open:
-            self.inventory.draw(self.win)
+            self.win.blit(self.inventory.image, self.inventory.rect)
             self.inventory.update(self.win)
 
         self.stats_bar.draw(self.win)

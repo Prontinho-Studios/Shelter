@@ -2,7 +2,7 @@ import pygame
 from utilis import import_folder_with_scale
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, inventory):
         super().__init__()
 
         # Player image and animations
@@ -27,6 +27,9 @@ class Player(pygame.sprite.Sprite):
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+
+        # Others
+        self.inventory = inventory
 
 
     def import_character_assets(self):
@@ -120,9 +123,11 @@ class Player(pygame.sprite.Sprite):
 
     def pick_item(self, entities):
 
-        for sunflower in entities.sprites():
+        for sunflower in entities:
             if self.rect.colliderect(sunflower.rect):
                 # Add to Inventory
+                #print(self.inventory.storage)
+                self.inventory.add(sunflower.id, 1)
                 sunflower.kill()
             pass
 

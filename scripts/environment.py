@@ -66,6 +66,7 @@ class Sunflower(pygame.sprite.Sprite):
         super().__init__()
 
         # Render Properties
+        self.id = 1
         self.image = pygame.image.load(os.path.join("assets/sprites/environment/sunflower/sunflower1.png"))
         self.image = pygame.transform.scale(self.image, (26, 38))
         self.rect = self.image.get_rect(topleft = pos)

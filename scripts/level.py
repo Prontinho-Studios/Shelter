@@ -5,7 +5,7 @@ from pytmx import load_pygame
 from environment import Environment
 
 class Level():
-    def __init__(self, win):
+    def __init__(self, win, inventory):
         super().__init__()
 
         # Level Data
@@ -21,7 +21,7 @@ class Level():
 
         # Create player
         self.players = pygame.sprite.GroupSingle()
-        player = Player((100, win.get_height()-150))
+        player = Player((100, win.get_height()-150), inventory)
         self.players.add(player)
 
     # Draw all the map tiles

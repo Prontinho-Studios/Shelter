@@ -16,8 +16,8 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Game Objects
-        self.level = Level(self.win)
         self.canvas = Canvas(self.win)
+        self.level = Level(self.win, self.canvas.inventory)
 
 
     # Game Loop
