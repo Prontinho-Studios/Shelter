@@ -2,7 +2,7 @@ import pygame, os
 from utilis import import_folder_with_scale, canvas_path
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, path_icon, path_hover, path_animation, pos, size):
+    def __init__(self, path_icon, path_hover, path_animation, pos, size, on_click_event):
         super().__init__()
 
         # Render Properties
@@ -12,6 +12,9 @@ class Button(pygame.sprite.Sprite):
         self.image = pygame.image.load(os.path.join(self.path_icon)).convert_alpha()
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect(topleft = pos)
+
+        # On Click Function
+        self.on_click_event = on_click_event
 
         # Animation Properties
         if path_animation != "":
@@ -61,7 +64,12 @@ class Button(pygame.sprite.Sprite):
             except:
                 pass
 
+            # Handle Event
+            self.clicked = False
+            self.on_click_event()
 
+
+    # Correct this bug here <------------------------ Event not happening because of self.clicked = False
     def animate(self):
         
 		# Loop over frame index 

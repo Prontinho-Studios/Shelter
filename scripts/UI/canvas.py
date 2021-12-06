@@ -18,9 +18,10 @@ class Canvas():
         self.stats_bar.add(stats_bar)
 
         # Create Inventory
+        self.inventory_open = False
         self.inventory = pygame.sprite.Group()
         pos = pygame.math.Vector2(win.get_width()/2-64*5, win.get_height()/2-32*5-30)
-        inventory = Inventory("inventory/inventory_background.png", pos, (128*5, 75*5))
+        inventory = Inventory("inventory/inventory_background.png", pos, (128*5, 75*5), self.close_inventory)
         self.inventory.add(inventory)
 
 
@@ -30,22 +31,34 @@ class Canvas():
         # Inventory Button
         icon_path = "inventory/icon_animation/inventory-button-1.png"
         hover_path = "inventory/inventory-button-hover.png"
-        animation_path = 'inventory/icon_animation/'
-        bt = Button(icon_path, hover_path, animation_path, (w - 150, 20), (48, 48))
+        animation_path = "inventory/icon_animation/"
+        on_click_event = self.open_inventory
+        bt = Button(icon_path, hover_path, animation_path, (w - 150, 20), (48, 48), on_click_event)
         self.buttons.add(bt)
 
         # Options Button
         icon_path = "settings_icon.png"
         hover_path = "settings_icon_hover.png"
-        bt = Button(icon_path, hover_path, "", (w - 80, 20), (48, 48))
+        on_click_event = ""
+        bt = Button(icon_path, hover_path, "", (w - 80, 20), (48, 48), on_click_event)
         self.buttons.add(bt)
+
+
+    def open_inventory(self):
+        self.inventory_open = True
+
+
+    def close_inventory(self):
+        print("entrou")
+        self.inventory_open = False
 
 
     def run(self):
         self.buttons.update()
         self.buttons.draw(self.win)
 
-        self.inventory.draw(self.win)
-        self.inventory.update(self.win)
+        if self.inventory_open:
+            self.inventory.draw(self.win)
+            self.inventory.update(self.win)
 
         self.stats_bar.draw(self.win)

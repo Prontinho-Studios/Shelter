@@ -4,7 +4,7 @@ from UI.button import Button
 
 
 class Inventory(pygame.sprite.Sprite):
-    def __init__(self, path, pos, size):
+    def __init__(self, path, pos, size, close_event):
         super().__init__()
 
         self.image = pygame.image.load(canvas_path + path)
@@ -20,7 +20,8 @@ class Inventory(pygame.sprite.Sprite):
         icon_path = "exit_button.png"
         hover_path = "exit_button_hover.png"
         animation_path = ""
-        bt = Button(icon_path, hover_path, animation_path, (pos[0] + self.image.get_width() - 32, pos[1] + 20), (48, 48))
+        self.close_event = close_event
+        bt = Button(icon_path, hover_path, animation_path, (pos[0] + self.image.get_width() - 32, pos[1] + 20), (48, 48), close_event)
         self.exit_button.add(bt)
 
         # Slots
@@ -33,7 +34,6 @@ class Inventory(pygame.sprite.Sprite):
                 temp = (pos[0] + x * 100 + 35, pos[1] + y * 76 + 70)
                 slot = Slot(slot_sprite, temp)
                 self.slots.add(slot)
-
 
     def update(self, win):
         self.slots.draw(win)
@@ -51,4 +51,5 @@ class Slot(pygame.sprite.Sprite):
         self.image = pygame.image.load(canvas_path + path)
         self.image = pygame.transform.scale(self.image, (64, 64))
         self.rect = self.image.get_rect(topleft = pos)
-        
+    
+    # Missing Hover Event

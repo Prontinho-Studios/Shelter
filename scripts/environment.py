@@ -19,7 +19,7 @@ class Environment():
             self.clouds.add(cloud)
 
         # Create Sunflowers
-        sunflower = Sunflower((600, win.get_height()-220))
+        sunflower = Sunflower((600, win.get_height()-290))
         self.sunflowers.add(sunflower)
 
 
