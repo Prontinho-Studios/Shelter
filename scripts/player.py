@@ -123,13 +123,13 @@ class Player(pygame.sprite.Sprite):
 
     def pick_item(self, entities):
 
-        for sunflower in entities:
-            if self.rect.colliderect(sunflower.rect):
+        for entity in entities:
+            if self.rect.colliderect(entity.rect):
                 # Add to Inventory
                 #print(self.inventory.storage)
-                self.inventory.add(sunflower.id, 1)
-                sunflower.kill()
-            pass
+                #self.inventory.add(entity.id, 1)
+                entity.kill()
+
 
     def update(self, entities):
         self.get_input(entities)

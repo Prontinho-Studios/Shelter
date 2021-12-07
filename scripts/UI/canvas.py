@@ -2,6 +2,7 @@ import pygame
 from UI.button import Button
 from UI.inventory import Inventory
 from UI.statsBar import StatsBar
+from UI.ammoCounter import AmmoCounter
 
 class Canvas():
     def __init__(self, win):
@@ -13,9 +14,12 @@ class Canvas():
         self.setup_buttons()
 
         # Create Stats Bar
-        self.stats_bar = pygame.sprite.Group()
         stats_bar = StatsBar("stats_bar.png", (20, 20), (70*3, 20*3))
-        self.stats_bar.add(stats_bar)
+        self.stats_bar = pygame.sprite.GroupSingle(stats_bar)
+
+        # Create Ammo Counter
+        ammo_counter = AmmoCounter("ammo_counter.png", (250, 20), (15*3, 25*3))
+        self.ammo_counter = pygame.sprite.GroupSingle(ammo_counter)
 
         # Create Inventory
         self.inventory_open = False
@@ -60,3 +64,5 @@ class Canvas():
             self.inventory.update(self.win)
 
         self.stats_bar.draw(self.win)
+        self.ammo_counter.draw(self.win)
+        self.ammo_counter.update(self.win)

@@ -23,3 +23,14 @@ def import_folder_with_scale(path, scale):
 			surface_list.append(image_surf)
 
 	return surface_list
+
+
+def animate_loop(animation, frame_index, animation_speed):
+        
+	# Loop over frame index 
+	frame_index += animation_speed
+	if frame_index >= len(animation):
+		frame_index = 0
+
+	# Return the animation frame
+	return animation[int(frame_index)], frame_index

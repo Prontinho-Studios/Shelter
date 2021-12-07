@@ -11,13 +11,16 @@ class Level():
         # Level Data
         self.tmxdata = load_pygame("assets/levels/level_data/level_0.tmx")
         self.win = win 
+        
+        # Background
+        self.background = pygame.image.load("assets/sprites/environment/background.png").convert()
+        
+        # Create an environment
+        self.environment = Environment(win)
 
         # Create Map
         self.world_shift = 0
         self.setup_level()
-
-        # Create an environment
-        self.environment = Environment(win)
 
         # Create player
         self.players = pygame.sprite.GroupSingle()
@@ -29,12 +32,38 @@ class Level():
         self.tiles = pygame.sprite.Group()
 
         for layer in self.tmxdata:
-            for tile in layer.tiles():
-                x = tile[0] * 64
-                y = tile[1] * 64
-                if tile[2] != None:
-                    tile = Tile((x, y), tile[2])
-                    self.tiles.add(tile)
+            
+            if layer.name == "decorations":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        self.environment.add_tree(tile[2], (x, y-50))
+            elif layer.name == "foreground":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        self.environment.add_bush(tile[2], (x, y+26))
+            elif layer.name == "sunflowers":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        self.environment.add_sunflower(tile[2], (x, y+27))
+            elif layer.name == "rocks":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        self.environment.add_rocks(tile[2], (x, y+46))
+            else:
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        tile = Tile((x, y), tile[2])
+                        self.tiles.add(tile)
 
     def horizontal_movement_collision(self):
         player = self.players.sprite
@@ -95,6 +124,9 @@ class Level():
     # Run the Level
     def run(self):
 
+        # Background
+        self.win.blit(self.background, self.background.get_rect())
+
         # Pysics
         self.scroll_x()
         self.horizontal_movement_collision()
@@ -108,6 +140,9 @@ class Level():
         self.environment.update(self.world_shift)
 
         # Draw Player
-        self.players.update(self.environment.sunflowers)
+        self.players.update(self.environment.collectibles)
         self.players.draw(self.win)
+
+        # Draw Foreground Environment Objects
+        self.environment.late_update(self.world_shift)
         

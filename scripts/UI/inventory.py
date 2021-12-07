@@ -135,12 +135,11 @@ class Item(pygame.sprite.Sprite):
 
         # Render Properties
         self.image = pygame.image.load(get_item_by_id(id)).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.image.get_width()*2, self.image.get_height()*2))
+        self.image = pygame.transform.scale(self.image, (self.image.get_width(), self.image.get_height()))
         self.rect = self.image.get_rect(center = pos) # self.rect.center
         self.quantity = quantity
 
         # Quantity Text
-        
         font_quantity = pygame.font.Font("assets/fonts/prstart.ttf", 11)
         self.quantity_text = font_quantity.render(str(self.quantity), True, 'black')
 

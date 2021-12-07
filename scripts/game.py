@@ -19,7 +19,6 @@ class Game:
         self.canvas = Canvas(self.win)
         self.level = Level(self.win, self.canvas.inventory)
 
-
     # Game Loop
     def run(self):
         

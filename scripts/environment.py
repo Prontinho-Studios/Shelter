@@ -1,6 +1,8 @@
 import pygame, os
 from random import randint, random
-from utilis import import_folder_with_scale
+from object import Animated_Object
+from utilis import import_folder_with_scale, animate_loop
+from object import Animated_Object, Collectable_Object
 
 # This class manage all the environment in the map
 class Environment():
@@ -9,27 +11,47 @@ class Environment():
         # Properties
         self.win = win
         self.max_clouds = 10
+
+        # All Objects
         self.clouds = pygame.sprite.Group()
-        self.max_sunflowers = 10
-        self.sunflowers = pygame.sprite.GroupSingle()
+        self.collectibles = pygame.sprite.Group()
+        self.trees = pygame.sprite.Group()
+        self.bushes = pygame.sprite.Group()
 
         # Create Clouds
         for _ in range(self.max_clouds):
             cloud = Cloud((randint(0, win.get_width()), randint(0,100)), win.get_width())
             self.clouds.add(cloud)
 
-        # Create Sunflowers
-        sunflower = Sunflower((600, win.get_height()-290))
-        self.sunflowers.add(sunflower)
+
+    def add_sunflower(self, image, pos):
+        obj = Collectable_Object(image, pos, "assets/sprites/environment/sunflower", 1)
+        self.collectibles.add(obj)
+
+    def add_rocks(self, image, pos):
+        obj = Collectable_Object(image, pos, "", 2)
+        self.collectibles.add(obj)
+
+    def add_tree(self, image, pos):
+        self.trees.add(Animated_Object(image, pos, "assets/sprites/environment/tree"))
+
+    def add_bush(self, image, pos):
+        self.bushes.add(Animated_Object(image, pos, "assets/sprites/environment/bush"))
 
 
     def update(self, x_shift):
         
         self.clouds.update()
         self.clouds.draw(self.win)
+        
+        self.trees.update(x_shift)
+        self.trees.draw(self.win)
+        self.collectibles.update(x_shift)
+        self.collectibles.draw(self.win)
 
-        self.sunflowers.update(x_shift)
-        self.sunflowers.draw(self.win)
+    def late_update(self, x_shift):
+        self.bushes.update(x_shift)
+        self.bushes.draw(self.win)
 
 
 # Cloud Object
@@ -59,41 +81,3 @@ class Cloud(pygame.sprite.Sprite):
         self.rect.x = -100
         self.rect.y = randint(0, 100)
 
-
-# Sunflower Object
-class Sunflower(pygame.sprite.Sprite):
-    def __init__(self, pos):
-        super().__init__()
-
-        # Render Properties
-        self.id = 1
-        self.image = pygame.image.load(os.path.join("assets/sprites/environment/sunflower/sunflower1.png"))
-        self.image = pygame.transform.scale(self.image, (26, 38))
-        self.rect = self.image.get_rect(topleft = pos)
-
-        # Animation Properties
-        self.animation_speed = 0.075
-        self.frame_index = 0
-        self.import_animation()
-
-    # 
-    def update(self, x_shift):   
-        
-        self.rect.x += x_shift
-        
-        self.animate()
-
-
-    def import_animation(self):
-        path = 'assets/sprites/environment/sunflower/'
-        self.animation = import_folder_with_scale(path, (26, 38))
-
-
-    def animate(self):
-        
-		# Loop over frame index 
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(self.animation):
-            self.frame_index = 0
-
-        self.image = self.animation[int(self.frame_index)]
