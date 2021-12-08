@@ -5,7 +5,7 @@ from pytmx import load_pygame
 from environment import Environment
 
 class Level():
-    def __init__(self, win, inventory):
+    def __init__(self, win, player_ui_components):
         super().__init__()
 
         # Level Data
@@ -24,12 +24,13 @@ class Level():
 
         # Create player
         self.players = pygame.sprite.GroupSingle()
-        player = Player((100, win.get_height()-150), inventory)
+        player = Player(win, (100, win.get_height()-150), player_ui_components)
         self.players.add(player)
 
     # Draw all the map tiles
     def setup_level(self):
         self.tiles = pygame.sprite.Group()
+        self.background_tiles = pygame.sprite.Group()
 
         for layer in self.tmxdata:
             
@@ -57,6 +58,13 @@ class Level():
                     y = tile[1] * 64
                     if tile[2] != None:
                         self.environment.add_rocks(tile[2], (x, y+46))
+            elif layer.name == "background":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        tile = Tile((x, y), tile[2])
+                        self.background_tiles.add(tile)
             else:
                 for tile in layer.tiles():
                     x = tile[0] * 64
@@ -133,6 +141,8 @@ class Level():
         self.vertical_movement_collision()
 
         # Draw Tiles
+        self.background_tiles.update(self.world_shift)
+        self.background_tiles.draw(self.win)
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.win)
         
@@ -140,7 +150,7 @@ class Level():
         self.environment.update(self.world_shift)
 
         # Draw Player
-        self.players.update(self.environment.collectibles)
+        self.players.update(self.environment.collectibles, self.world_shift)
         self.players.draw(self.win)
 
         # Draw Foreground Environment Objects

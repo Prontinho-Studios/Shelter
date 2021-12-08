@@ -17,7 +17,7 @@ class Game:
 
         # Game Objects
         self.canvas = Canvas(self.win)
-        self.level = Level(self.win, self.canvas.inventory)
+        self.level = Level(self.win, [self.canvas.inventory, self.canvas.stats_bar, self.canvas.ammo_counter])
 
     # Game Loop
     def run(self):

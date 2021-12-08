@@ -14,12 +14,10 @@ class Canvas():
         self.setup_buttons()
 
         # Create Stats Bar
-        stats_bar = StatsBar("stats_bar.png", (20, 20), (70*3, 20*3))
-        self.stats_bar = pygame.sprite.GroupSingle(stats_bar)
+        self.stats_bar = StatsBar("stats_bar.png", (20, 20), (70*3, 20*3))
 
         # Create Ammo Counter
-        ammo_counter = AmmoCounter("ammo_counter.png", (250, 20), (15*3, 25*3))
-        self.ammo_counter = pygame.sprite.GroupSingle(ammo_counter)
+        self.ammo_counter = AmmoCounter("ammo_counter.png", (250, 20), (15*3, 25*3))
 
         # Create Inventory
         self.inventory_open = False
@@ -63,6 +61,6 @@ class Canvas():
             self.win.blit(self.inventory.image, self.inventory.rect)
             self.inventory.update(self.win)
 
-        self.stats_bar.draw(self.win)
-        self.ammo_counter.draw(self.win)
+        self.win.blit(self.stats_bar.image, self.stats_bar.rect)
+        self.win.blit(self.ammo_counter.image, self.ammo_counter.rect)
         self.ammo_counter.update(self.win)

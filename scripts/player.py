@@ -1,11 +1,13 @@
 import pygame
 from utilis import import_folder_with_scale
+from projectile import Projectile
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, inventory):
+    def __init__(self, win, pos, player_ui_components):
         super().__init__()
 
         # Player image and animations
+        self.win = win
         self.import_character_assets()
         self.frame_index = 0
         self.status = 'idle'
@@ -20,21 +22,29 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.8
         self.jump_speed = -16
 
-        # Player status
+        # Player Status
         self.picking_item = False
         self.facing_right = True
         self.on_ground = False
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+        
+        # Player Combat
+        self.aim = pygame.sprite.GroupSingle(Aim())
+        self.projectiles = pygame.sprite.Group()
+        self.aiming = False
+        self.attacking = False
 
-        # Others
-        self.inventory = inventory
+        # Player UI
+        self.inventory = player_ui_components[0]
+        self.stats_bar = player_ui_components[1]
+        self.ammo_counter = player_ui_components[2]
 
 
     def import_character_assets(self):
         character_path = 'assets/sprites/player/'
-        self.animations = {'idle':[],'pick':[],'run':[], 'jump':[], 'fall':[]}
+        self.animations = {'idle':[],'pick':[],'run':[], 'jump':[], 'fall':[], 'attack-idle':[], 'attack':[]}
 
         for animation in self.animations.keys():
             full_path = character_path + animation
@@ -50,6 +60,9 @@ class Player(pygame.sprite.Sprite):
             self.frame_index = 0
             if self.status == 'pick':
                 self.picking_item = False
+            if self.status == 'attack':
+                self.attacking = False
+                self.throw_projectile()
 
         image = animation[int(self.frame_index)]
         if self.facing_right:
@@ -75,6 +88,7 @@ class Player(pygame.sprite.Sprite):
 
     def get_input(self, entities):
         keys = pygame.key.get_pressed()
+        mouse = pygame.mouse.get_pressed()
 
         # Get the direction
         if keys[pygame.K_a]: # Left
@@ -95,11 +109,23 @@ class Player(pygame.sprite.Sprite):
             self.picking_item = True
             self.pick_item(entities)
 
+        # Aim
+        if mouse[0]:
+            self.aiming = not self.aiming
+
+        # Attack
+        if mouse[0] and self.aiming:
+            self.attacking = True
+
 
     def get_status(self):
 
         if self.picking_item:
             self.status = 'pick'
+        elif self.aiming:
+            self.status = 'attack-idle'
+        elif self.attacking:
+            self.status = 'attack'
         else:
             if self.direction.y < 0:
                 self.status = 'jump'
@@ -111,6 +137,11 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.status = 'idle'
 
+
+    def throw_projectile(self):
+        destination = pygame.math.Vector2(pygame.mouse.get_pos())
+        projectile = Projectile((self.rect.x, self.rect.y), destination)
+        self.projectiles.add(projectile)
 
     def apply_gravity(self):
         self.direction.y += self.gravity
@@ -125,15 +156,35 @@ class Player(pygame.sprite.Sprite):
 
         for entity in entities:
             if self.rect.colliderect(entity.rect):
-                # Add to Inventory
-                #print(self.inventory.storage)
-                #self.inventory.add(entity.id, 1)
+
                 entity.kill()
+                
+                # Rock
+                if entity.id == 2:
+                    self.ammo_counter.quantity += 1
+                    
 
 
-    def update(self, entities):
+    def update(self, entities, x_shift):
         self.get_input(entities)
         self.get_status()
         self.animate()
 
+        self.projectiles.draw(self.win)
+        self.projectiles.update(x_shift)
 
+        if self.aiming:
+            self.aim.draw(self.win)
+            self.aim.update()
+
+
+class Aim(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+
+        # Render Properties
+        self.image = pygame.image.load("assets/sprites/ui/aim.png").convert_alpha()
+        self.rect = self.image.get_rect(center = pygame.mouse.get_pos())
+
+    def update(self):   
+        self.rect.center = pygame.mouse.get_pos()

@@ -38,5 +38,4 @@ class Collectable_Object(Animated_Object):
         super().__init__(image, pos, animation_path)
 
         # Identification of the object
-        print(id)
         self.id = id
