@@ -3,6 +3,7 @@ from player import Player
 from tiles import Tile
 from pytmx import load_pygame
 from environment import Environment
+from enemies import Enemy
 
 class Level():
     def __init__(self, win, player_ui_components):
@@ -31,6 +32,7 @@ class Level():
     def setup_level(self):
         self.tiles = pygame.sprite.Group()
         self.background_tiles = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         for layer in self.tmxdata:
             
@@ -65,6 +67,13 @@ class Level():
                     if tile[2] != None:
                         tile = Tile((x, y), tile[2])
                         self.background_tiles.add(tile)
+            elif layer.name == "slimes":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        enemy = Enemy(tile[2], (x, y+32), self.win)
+                        self.enemies.add(enemy)
             else:
                 for tile in layer.tiles():
                     x = tile[0] * 64
@@ -148,6 +157,10 @@ class Level():
         
         # Draw Environment Objects
         self.environment.update(self.world_shift)
+
+        # Draw Enemies
+        self.enemies.update(self.world_shift)
+        self.enemies.draw(self.win)
 
         # Draw Player
         self.players.update(self.environment.collectibles, self.world_shift)

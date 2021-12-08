@@ -1,5 +1,5 @@
 import pygame
-from utilis import import_folder_with_scale
+from utilis import import_folder_with_scale, get_all_folder_animations
 from projectile import Projectile
 
 class Player(pygame.sprite.Sprite):
@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
 
     def import_character_assets(self):
         character_path = 'assets/sprites/player/'
-        self.animations = {'idle':[],'pick':[],'run':[], 'jump':[], 'fall':[], 'attack-idle':[], 'attack':[]}
+        self.animations = get_all_folder_animations(character_path, "player")
 
         for animation in self.animations.keys():
             full_path = character_path + animation
