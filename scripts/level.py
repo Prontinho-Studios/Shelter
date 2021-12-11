@@ -32,6 +32,7 @@ class Level():
     def setup_level(self):
         self.tiles = pygame.sprite.Group()
         self.background_tiles = pygame.sprite.Group()
+        self.platforms = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
 
         for layer in self.tmxdata:
@@ -66,7 +67,15 @@ class Level():
                     y = tile[1] * 64
                     if tile[2] != None:
                         tile = Tile((x, y), tile[2])
+                        print(layer.tiles())
                         self.background_tiles.add(tile)
+            elif layer.name == "platforms":
+                for tile in layer.tiles():
+                    x = tile[0] * 64
+                    y = tile[1] * 64
+                    if tile[2] != None:
+                        tile = Tile((x, y), tile[2])
+                        self.platforms.add(tile)
             elif layer.name == "slimes":
                 for tile in layer.tiles():
                     x = tile[0] * 64
@@ -154,6 +163,8 @@ class Level():
         self.background_tiles.draw(self.win)
         self.tiles.update(self.world_shift)
         self.tiles.draw(self.win)
+        self.platforms.update(self.world_shift)
+        self.platforms.draw(self.win)
         
         # Draw Environment Objects
         self.environment.update(self.world_shift)
