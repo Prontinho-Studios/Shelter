@@ -2,7 +2,7 @@ import pygame, os
 import math
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, pos, destination):
+    def __init__(self, pos):
         super().__init__()
 
         # Render Properties
@@ -10,12 +10,13 @@ class Projectile(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = pos)
 
         # Pysics Properties
-        self.gravity = 0.05
-        self.distance = 0
-        self.destination = destination
-        self.direction = pygame.math.Vector2(0, 0)
-        self.speed = 4
-        self.previousLocation = pygame.math.Vector2(pos)
+        self.initial_pos = (self.rect.x, self.rect.y)
+        destination = pygame.mouse.get_pos()
+        self.time = 0
+
+        # The distance between point A and B
+        self.power = math.sqrt((destination[1] - pos[1])**2 + (destination[0] - pos[0])**2)/8
+        self.angle = self.findAngle(destination)
 
 
     def update(self, x_shift):   #
@@ -23,26 +24,44 @@ class Projectile(pygame.sprite.Sprite):
         # Background Movement
         self.rect.x += x_shift
 
-        if not self.distance:
+        self.time += 0.15
+        po = self.ballPath(self.initial_pos[0], self.initial_pos[1], self.power, self.angle, self.time)
+        self.rect.x = po[0]
+        self.rect.y = po[1]
 
-            radians = math.atan2(self.destination.y - self.previousLocation.y, self.destination.x - self.previousLocation.y)
-            distance = math.hypot(self.destination.x - self.previousLocation.x, self.destination.y - self.previousLocation.y) / self.speed
-            self.distance = int(distance)
 
-            self.direction.x = math.cos(radians) * self.speed
-            self.direction.y = math.sin(radians) * self.speed
+    @staticmethod
+    def ballPath(startx, starty, power, ang, time):
+        angle = ang
+        velx = math.cos(angle) * power
+        vely = math.sin(angle) * power
 
-            self.previousLocation = self.rect.x, self.rect.y
+        distX = velx * time
+        distY = (vely * time) + ((-4.9 * (time ** 2)) / 2)
 
-        if self.distance:
-            self.rect.x += self.direction.x
-            self.rect.y += self.direction.y
+        newx = round(distX + startx)
+        newy = round(starty - distY)
 
-        self.apply_gravity()
 
-    def apply_gravity(self):
-        self.direction.y += self.gravity
-        self.rect.y += self.direction.y
+        return (newx, newy)
+        
 
-    def detect_collision(self):
-        pass
+    def findAngle(self, pos):
+        sX = self.rect.x
+        sY = self.rect.y
+        try:
+            angle = math.atan((sY - pos[1]) / (sX - pos[0]))
+        except:
+            angle = math.pi / 2
+
+        if pos[1] < sY and pos[0] > sX:
+            angle = abs(angle)
+        elif pos[1] < sY and pos[0] < sX:
+            angle = math.pi - angle
+        elif pos[1] > sY and pos[0] < sX:
+            angle = math.pi + abs(angle)
+        elif pos[1] > sY and pos[0] > sX:
+            angle = (math.pi * 2) - angle
+
+        return angle
+

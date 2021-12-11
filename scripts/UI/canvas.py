@@ -62,5 +62,7 @@ class Canvas():
             self.inventory.update(self.win)
 
         self.win.blit(self.stats_bar.image, self.stats_bar.rect)
+        self.stats_bar.update(self.win)
+
         self.win.blit(self.ammo_counter.image, self.ammo_counter.rect)
         self.ammo_counter.update(self.win)

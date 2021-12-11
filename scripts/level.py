@@ -67,7 +67,6 @@ class Level():
                     y = tile[1] * 64
                     if tile[2] != None:
                         tile = Tile((x, y), tile[2])
-                        print(layer.tiles())
                         self.background_tiles.add(tile)
             elif layer.name == "platforms":
                 for tile in layer.tiles():
@@ -94,6 +93,7 @@ class Level():
     def horizontal_movement_collision(self):
         player = self.players.sprite
         player.rect.x += player.direction.x * player.speed
+        player.feet_collider.x = player.rect.x
         
         for sprite in self.tiles.sprites():
             if sprite.rect.colliderect(player.rect):
@@ -113,6 +113,7 @@ class Level():
 
     def vertical_movement_collision(self):
         player = self.players.sprite
+        player.feet_collider.y = player.rect.bottom
         player.apply_gravity()
         
         for sprite in self.tiles.sprites():
@@ -125,6 +126,15 @@ class Level():
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
                     player.on_ceiling = True
+
+        # Platform Collision
+        if not player.descend:
+            for sprite in self.platforms.sprites():
+                if sprite.rect.colliderect(player.feet_collider):
+                    if player.direction.y > 0: 
+                        player.rect.bottom = sprite.rect.top
+                        player.direction.y = 0
+                        player.on_ground = True
         
         if player.on_ground and player.direction.y < 0 or player.direction.y > 1:
             player.on_ground = False

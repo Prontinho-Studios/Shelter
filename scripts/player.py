@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 4
         self.gravity = 0.8
         self.jump_speed = -16
+        self.feet_collider = pygame.Rect(self.rect.x, self.rect.bottom, self.rect.width, self.rect.height * 5 / 100)
 
         # Player Status
         self.picking_item = False
@@ -29,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.on_ceiling = False
         self.on_left = False
         self.on_right = False
+        self.descend = False
         
         # Player Combat
         self.aim = pygame.sprite.GroupSingle(Aim())
@@ -100,6 +102,9 @@ class Player(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
+        # Descend Platforms
+        self.descend = keys[pygame.K_s]
+
         # Jump
         if keys[pygame.K_SPACE] and self.on_ground:
             self.jump()
@@ -110,11 +115,10 @@ class Player(pygame.sprite.Sprite):
             self.pick_item(entities)
 
         # Aim
-        if mouse[0]:
-            self.aiming = not self.aiming
+        self.aiming = mouse[0]
 
         # Attack
-        if mouse[0] and self.aiming:
+        if self.aiming:
             self.attacking = True
 
 
@@ -139,9 +143,10 @@ class Player(pygame.sprite.Sprite):
 
 
     def throw_projectile(self):
-        destination = pygame.math.Vector2(pygame.mouse.get_pos())
-        projectile = Projectile((self.rect.x, self.rect.y), destination)
+        self.stats_bar.energy -= 10
+        projectile = Projectile((self.rect.x, self.rect.y))
         self.projectiles.add(projectile)
+
 
     def apply_gravity(self):
         self.direction.y += self.gravity
@@ -164,7 +169,6 @@ class Player(pygame.sprite.Sprite):
                     self.ammo_counter.quantity += 1
                     
 
-
     def update(self, entities, x_shift):
         self.get_input(entities)
         self.get_status()
@@ -176,6 +180,9 @@ class Player(pygame.sprite.Sprite):
         if self.aiming:
             self.aim.draw(self.win)
             self.aim.update()
+
+        # Feet Collider Gizmos
+        #pygame.draw.rect(self.win, 'red', self.feet_collider)
 
 
 class Aim(pygame.sprite.Sprite):
