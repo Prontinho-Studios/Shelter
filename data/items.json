@@ -1,0 +1,34 @@
+{
+    "Collectable": [
+      
+      {
+        "name": "Rock",
+        "path": "assets/sprites/environment/rock",
+        "animation": null
+      },
+      
+      {
+        "name": "SunFlower",
+        "path": "assets/sprites/environment/sunflower/sunflower1.png",
+        "animation": "assets/sprites/environment/sunflower"
+      }
+      
+    ],
+    
+    "Decoration": [
+      
+      {
+        "name": "Rock",
+        "path": "assets/sprites/environment/rock",
+        "animation": null
+      },
+      
+      {
+        "name": "SunFlower",
+        "path": "assets/sprites/environment/sunflower/sunflower1.png",
+        "animation": "assets/sprites/environment/sunflower"
+      }
+      
+    ]
+    
+  }

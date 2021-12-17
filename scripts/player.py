@@ -167,6 +167,8 @@ class Player(pygame.sprite.Sprite):
                 # Rock
                 if entity.id == 2:
                     self.ammo_counter.quantity += 1
+                else:
+                    self.inventory.add(1, 1)
                     
 
     def update(self, entities, x_shift):
