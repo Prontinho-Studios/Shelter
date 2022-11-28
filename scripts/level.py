@@ -180,8 +180,8 @@ class Level():
         self.environment.update(self.world_shift)
 
         # Draw Enemies
-        self.enemies.update(self.world_shift)
-        self.enemies.draw(self.win)
+        # self.enemies.update(self.world_shift)
+        # self.enemies.draw(self.win)
 
         # Draw Player
         self.players.update(self.environment.collectibles, self.world_shift)
@@ -189,4 +189,7 @@ class Level():
 
         # Draw Foreground Environment Objects
         self.environment.late_update(self.world_shift)
+
+        # Draw Environment Snowfall
+        self.environment.update_snowfall()
         

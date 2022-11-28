@@ -23,6 +23,12 @@ class Environment():
             cloud = Cloud((randint(0, win.get_width()), randint(0,100)), win.get_width())
             self.clouds.add(cloud)
 
+        # Create SnowFall
+        self.snowfall = SnowFall(win)
+
+        
+        
+
 
     def add_sunflower(self, image, pos):
         obj = Collectable_Object(image, pos, "assets/sprites/environment/sunflower", 1)
@@ -48,6 +54,9 @@ class Environment():
         self.trees.draw(self.win)
         self.collectibles.update(x_shift)
         self.collectibles.draw(self.win)
+
+    def update_snowfall(self):
+        self.snowfall.update()
 
     def late_update(self, x_shift):
         self.bushes.update(x_shift)
@@ -81,3 +90,41 @@ class Cloud(pygame.sprite.Sprite):
         self.rect.x = -100
         self.rect.y = randint(0, 100)
 
+
+# SnowFall Object
+class SnowFall(pygame.sprite.Sprite):
+    def __init__(self, win):
+        super().__init__()
+        self.snowFall = []
+        self.win = win
+        for i in range(500):
+            x = randint(0, 1000)
+            y = randint(0, 700)
+            self.snowFall.append({"x": x, "y": y, "speed": self.getNewSpeed()})
+    
+    
+    def getNewSpeed(self):
+        return randint(5, 8)
+
+    # Cloud Movement
+    def update(self):
+        
+        # Update the position of every snowflake
+        for i in range(len(self.snowFall)):
+
+            pygame.draw.circle(self.win, [255, 255, 255], [self.snowFall[i]["x"], self.snowFall[i]["y"]], randint(2, 4))
+
+            self.snowFall[i]["y"] += self.snowFall[i]["speed"]
+            self.snowFall[i]["x"] -= self.snowFall[i]["speed"]/3
+            if self.snowFall[i]["y"] > 700:
+                self.respawn(i)
+
+    # Restart the position of the cloud
+    def respawn(self, pos):
+        y = randint(-50, -10)
+        self.snowFall[pos]["y"] = y
+    
+        x = randint(50, 1200)
+        self.snowFall[pos]["x"] = x
+
+        self.snowFall[pos]["speed"] = self.getNewSpeed()
